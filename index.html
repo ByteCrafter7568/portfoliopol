@@ -1,10 +1,67 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Картинка</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image zoom</title>
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: #111;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    img {
+        transform-origin: center;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+</style>
 </head>
 <body>
-  <img src="image.png" alt="image">
+
+<img id="img" src="/static/image.png" alt="image">
+
+<script>
+const img = document.getElementById('img');
+
+let scale = 1;
+let minScale = 1;
+const maxScale = 5;
+
+img.onload = () => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const scaleX = vw / img.naturalWidth;
+    const scaleY = vh / img.naturalHeight;
+
+    minScale = Math.min(scaleX, scaleY);
+    scale = minScale;
+
+    applyScale();
+};
+
+function applyScale() {
+    img.style.transform = `scale(${scale})`;
+}
+
+document.addEventListener('wheel', e => {
+    e.preventDefault();
+
+    scale += e.deltaY * -0.001;
+    scale = Math.max(minScale, Math.min(scale, maxScale));
+
+    applyScale();
+}, { passive: false });
+
+window.addEventListener('resize', () => location.reload());
+</script>
+
 </body>
 </html>
